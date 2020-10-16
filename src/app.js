@@ -4,6 +4,7 @@ const morgan = require('morgan');
 const cors = require('cors');
 const helmet = require('helmet');
 const winston = require('winston');
+const { isWebUri } = require('valid-url');
 const { v4: uuid } = require('uuid');
 const { bookmarks } = require('./STORE');
 const { NODE_ENV } = require('./config');
