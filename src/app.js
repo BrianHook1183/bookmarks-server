@@ -15,6 +15,7 @@ const morganOption = (NODE_ENV === 'production')
 
 app.use(morgan(morganOption));
 app.use(helmet());
+app.use(express.json());
 app.use(cors());
 
 //  Winston  Error Logging
@@ -63,28 +64,27 @@ app.get('/bookmarks', (req, res) => {
 app.get('/bookmarks/:id', (req, res) => {
   const { id } = req.params;
   const bookmark = bookmarks.find(b => b.id == id);
-  // make sure we found a bookmark
+  // error if ID not found
   if (!bookmark) {
     logger.error(`Bookmark with id ${id} not found.`);
     return res
       .status(404)
       .send('Bookmark Not Found');
   }
-
   res.json(bookmark);
 })
 
 app.post('/bookmarks', (req, res) => {
-  // validate book mark
-  // generate a UUID
-  // add to bookmarks list
-  res.send('accepts a JSON object representing a bookmark and adds it to the list of bookmarks after validation');
+  //TODO: validate book mark
+  //TODO: generate a UUID
+  //TODO: add to bookmarks list
+  res.json(req.body);
 });
 
 app.delete('/bookmarks/:id', (req, res) => {
   const { id } = req.params;
-  // validate book mark
-  // add to bookmarks list
+  //TODO: validate book mark
+  //TODO: add to bookmarks list
   res.send(`deletes the bookmark with the given ID: ${id}`);
 });
 
