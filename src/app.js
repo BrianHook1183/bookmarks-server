@@ -3,6 +3,7 @@ const express = require('express');
 const morgan = require('morgan');
 const cors = require('cors');
 const helmet = require('helmet');
+const winston = require('winston');
 const { NODE_ENV } = require('./config');
 
 const app = express();
@@ -15,6 +16,21 @@ app.use(morgan(morganOption));
 app.use(helmet());
 app.use(cors());
 
+//  Winston  Error Logging
+const logger = winston.createLogger({
+  level: 'info',
+  format: winston.format.json(),
+  transports: [
+    new winston.transports.File({ filename: 'info.log' })
+  ]
+});
+if (NODE_ENV !== 'production') {
+  logger.add(new winston.transports.Console({
+    format: winston.format.simple()
+  }));
+}
+//  Winston  Error Logging
+
 // Authorization middleware
 app.use(function validateBearerToken(req, res, next) {
   const apiToken = process.env.API_TOKEN;
@@ -26,6 +42,7 @@ app.use(function validateBearerToken(req, res, next) {
   };
   next();
 });
+// Authorization middleware
 
 app.get('/', (req, res) => {
   res.send('Hello, world!');
