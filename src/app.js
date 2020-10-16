@@ -122,9 +122,22 @@ app.post('/bookmarks', (req, res) => {
 
 app.delete('/bookmarks/:id', (req, res) => {
   const { id } = req.params;
-  //TODO: validate book mark
-  //TODO: add to bookmarks list
-  res.send(`deletes the bookmark with the given ID: ${id}`);
+  const bookmarkIndex = bookmarks.findIndex(bi => bi.id == id);
+  console.log(bookmarkIndex);
+
+  if (bookmarkIndex === -1) {
+    logger.error(`Bookmark with id ${id} not found.`);
+    return res
+      .status(404)
+      .send('Not Found');
+  }
+
+  bookmarks.splice(bookmarkIndex, 1)
+
+  logger.info(`Bookmark with id ${id} deleted.`);
+  res
+    .status(204)
+    .end();
 });
 
 
