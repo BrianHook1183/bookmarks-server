@@ -47,16 +47,11 @@ app.use(function validateBearerToken(req, res, next) {
 });
 // Authorization middleware
 
+
+// Route handlers
 app.get('/', (req, res) => {
   res.send('Hello, world!');
 });
-
-
-
-
-
-
-
 
 app.get('/bookmarks', (req, res) => {
   res.json(bookmarks);
@@ -73,7 +68,7 @@ app.get('/bookmarks/:id', (req, res) => {
       .send('Bookmark Not Found');
   }
   res.json(bookmark);
-})
+});
 
 app.post('/bookmarks', (req, res) => {
   const { title, url, description, rating } = req.body;
@@ -81,26 +76,38 @@ app.post('/bookmarks', (req, res) => {
     logger.error('Title is required');
     return res
       .status(400)
-      .send('Invalid data');
-  }
+      .send('Title is required');
+  };
   if (!url) {
-    logger.error('url is required');
+    logger.error('Url is required');
     return res
       .status(400)
-      .send('Invalid data');
-  }
+      .send('Url is required');
+  };
   if (!description) {
-    logger.error('description is required');
+    logger.error('Description is required');
     return res
       .status(400)
-      .send('Invalid data');
-  }
+      .send('Description is required');
+  };
   if (!rating) {
-    logger.error('rating is required');
+    logger.error('Rating is required');
     return res
       .status(400)
-      .send('Invalid data');
-  }
+      .send('Rating is required');
+  };
+  if (rating < 0 || rating > 5 || !Number.isInteger(rating)) {
+    logger.error('Rating must be between 0 and 5');
+    return res
+      .status(400)
+      .send('Rating must be between 0 and 5');
+  };
+  if (!isWebUri(url)) {
+    logger.error('URL is invalid');
+    return res
+      .status(400)
+      .send('URL is invalid');
+  };
 
   const id = uuid();
   const bookmark = {
@@ -122,43 +129,26 @@ app.post('/bookmarks', (req, res) => {
 
 app.delete('/bookmarks/:id', (req, res) => {
   const { id } = req.params;
-  const bookmarkIndex = bookmarks.findIndex(bi => bi.id == id);
+  const bookmarkIndex = bookmarks.findIndex(b => b.id == id);
   console.log(bookmarkIndex);
 
   if (bookmarkIndex === -1) {
     logger.error(`Bookmark with id ${id} not found.`);
     return res
       .status(404)
-      .send('Not Found');
-  }
+      .send('Bookmark Not Found');
+  };
 
-  bookmarks.splice(bookmarkIndex, 1)
+  bookmarks.splice(bookmarkIndex, 1);
 
   logger.info(`Bookmark with id ${id} deleted.`);
   res
     .status(204)
     .end();
 });
+// Route handlers
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+// Error handler
 app.use((error, req, res, next) => {
   let response;
   if (NODE_ENV === 'production') {
@@ -168,6 +158,6 @@ app.use((error, req, res, next) => {
   }
   res.status(500).json(response);
 });
-
+// Error handler
 
 module.exports = app;
