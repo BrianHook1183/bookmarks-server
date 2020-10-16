@@ -4,6 +4,7 @@ const morgan = require('morgan');
 const cors = require('cors');
 const helmet = require('helmet');
 const winston = require('winston');
+const { v4: uuid } = require('uuid');
 const { bookmarks } = require('./STORE');
 const { NODE_ENV } = require('./config');
 
@@ -75,10 +76,48 @@ app.get('/bookmarks/:id', (req, res) => {
 })
 
 app.post('/bookmarks', (req, res) => {
-  //TODO: validate book mark
-  //TODO: generate a UUID
-  //TODO: add to bookmarks list
-  res.json(req.body);
+  const { title, url, description, rating } = req.body;
+  if (!title) {
+    logger.error('Title is required');
+    return res
+      .status(400)
+      .send('Invalid data');
+  }
+  if (!url) {
+    logger.error('url is required');
+    return res
+      .status(400)
+      .send('Invalid data');
+  }
+  if (!description) {
+    logger.error('description is required');
+    return res
+      .status(400)
+      .send('Invalid data');
+  }
+  if (!rating) {
+    logger.error('rating is required');
+    return res
+      .status(400)
+      .send('Invalid data');
+  }
+
+  const id = uuid();
+  const bookmark = {
+    id,
+    title,
+    url,
+    description,
+    rating
+  };
+
+  bookmarks.push(bookmark);
+
+  logger.info(`Bookmark with id ${id} created`);
+  res
+    .status(201)
+    .location(`http://localhost:8000/bookmarks/${id}`)
+    .json(bookmark);
 });
 
 app.delete('/bookmarks/:id', (req, res) => {
