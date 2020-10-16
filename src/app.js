@@ -4,6 +4,7 @@ const morgan = require('morgan');
 const cors = require('cors');
 const helmet = require('helmet');
 const winston = require('winston');
+const STORE = require('./STORE');
 const { NODE_ENV } = require('./config');
 
 const app = express();
@@ -56,7 +57,7 @@ app.get('/', (req, res) => {
 
 
 app.get('/bookmarks', (req, res) => {
-  res.send('returns a list of bookmarks');
+  res.json(STORE);
 });
 
 app.get('/bookmarks/:id', (req, res) => {
