@@ -4,7 +4,7 @@ const morgan = require('morgan');
 const cors = require('cors');
 const helmet = require('helmet');
 const winston = require('winston');
-const STORE = require('./STORE');
+const { bookmarks } = require('./STORE');
 const { NODE_ENV } = require('./config');
 
 const app = express();
@@ -57,14 +57,22 @@ app.get('/', (req, res) => {
 
 
 app.get('/bookmarks', (req, res) => {
-  res.json(STORE);
+  res.json(bookmarks);
 });
 
 app.get('/bookmarks/:id', (req, res) => {
   const { id } = req.params;
-  // check if id is a number first, THEN check if it matches existing Ids
-  res.send(`returns a single bookmark with the given ID: ${id} `);
-});
+  const bookmark = bookmarks.find(b => b.id == id);
+  // make sure we found a bookmark
+  if (!bookmark) {
+    logger.error(`Bookmark with id ${id} not found.`);
+    return res
+      .status(404)
+      .send('Bookmark Not Found');
+  }
+
+  res.json(bookmark);
+})
 
 app.post('/bookmarks', (req, res) => {
   // validate book mark
