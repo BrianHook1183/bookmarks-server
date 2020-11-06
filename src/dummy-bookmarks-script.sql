@@ -1,3 +1,7 @@
+--* This file is deprecated. The create table statement is now in ./migrations/001.do.create_bookmarks_bookmarks.sql and the insert statement is in ./seeds/seed.bookmarks_bookmarks.sql
+
+
+
 -- First, remove the table if it exists
 drop table if exists bookmarks;
 
