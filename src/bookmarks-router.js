@@ -3,13 +3,18 @@ const { isWebUri } = require('valid-url');
 const { v4: uuid } = require('uuid');
 const { bookmarks } = require('./STORE');
 const logger = require('./logger');
+const BookmarksService = require('./bookmarks-service');
 const bookmarksRouter = express.Router();
 
 // for endpoint: /bookmarks
 bookmarksRouter
   .route('/bookmarks')
-  .get((req, res) => {
-    res.json(bookmarks);
+  .get((req, res, next) => {
+    BookmarksService.getAllBookmarks(req.app.get('db'))
+      .then(bookmarks => {
+        res.json(bookmarks)
+      })
+      .catch(next)
   })
   .post((req, res) => {
     const { title, url, description, rating } = req.body;
