@@ -52,7 +52,7 @@ describe('Bookmarks Endpoints', function () {
   describe(`GET /bookmarks/:id`, () => {
     context(`Given no bookmarks`, () => {
       it(`responds with 404`, () => {
-        const bookmarkId = 123456
+        const bookmarkId = 123456;
         return supertest(app)
           .get(`/bookmarks/${bookmarkId}`)
           .set('Authorization', `Bearer ${process.env.API_TOKEN}`)
