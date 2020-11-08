@@ -4,7 +4,9 @@ const BookmarksService = {
   getAllBookmarks(knex) {
     return knex.select('*').from('bookmarks');
   },
-  // More methods will go here
+  getById(knex, id) {
+    return knex.from('bookmarks').select('*').where('id', id).first();
+  },
 };
 
 module.exports = BookmarksService;
